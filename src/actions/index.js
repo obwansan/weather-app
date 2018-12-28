@@ -13,7 +13,10 @@ export function fetchWeather(city) {
   // axios.get() returns a promise
   const request = axios.get(url);
 
+  console.log('Request:', request);
+
   return {
-    type: FETCH_WEATHER
+    type: FETCH_WEATHER,
+    payload: request
   }
 }

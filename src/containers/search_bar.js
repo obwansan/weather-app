@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { fetchWeather } from '../actions/index';
 
-export default class SearchBar extends Component {
+class SearchBar extends Component {
   constructor(props) {
     super(props);
 
@@ -12,6 +15,7 @@ export default class SearchBar extends Component {
     // (otherwise the program doesn't know where 'this' refers to when the
     // onInputChange method is called.)
     this.onInputChange = this.onInputChange.bind(this);
+    this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
   onInputChange(event) {
@@ -21,7 +25,10 @@ export default class SearchBar extends Component {
   onFormSubmit(event) {
     event.preventDefault();
 
-    // We need to go and fetch weather data
+    // Fetch the weather data
+    this.props.fetchWeather(this.state.term);
+    // Clear the input field (changing the state makes SearchBar rerender)
+    this.setState({ term: ''});
   }
 
   render() {
@@ -39,3 +46,15 @@ export default class SearchBar extends Component {
     );
   }
 }
+
+// Hook up the fetchWeather action creator to the SearchBar container.
+// Whenever fetchWeather is called and returns an action, the action will
+// be passed (dispatched!) to the middleware and reducers inside the redux
+// application.
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({fetchWeather}, dispatch);
+}
+
+// Have to have two parameters. We make the first one null because SearchBar
+// doesn't care about the redux app state.
+export default connect(null, mapDispatchToProps)(SearchBar)
